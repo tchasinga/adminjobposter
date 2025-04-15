@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "db:push": "prisma generate && prisma db push",
     "lint": "next lint"
   },
   "dependencies": {
