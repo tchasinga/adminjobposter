@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-namespace */
 import { NextResponse } from 'next/server';
-
+import  prisma  from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
 
 // Constants and configuration
 const PASSWORD_SALT_ROUNDS = 12;
@@ -54,8 +53,7 @@ class ErrorResponse extends Error {
   }
 }
 
-// Initialize Prisma with singleton pattern
-const prisma = new PrismaClient();
+
 
 // Utility functions
 async function validateInput(data: any): Promise<SignupInput> {
