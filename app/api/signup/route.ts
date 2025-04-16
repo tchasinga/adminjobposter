@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-namespace */
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { PrismaClient } from '@prisma/client';
 
 // Constants and configuration
 const PASSWORD_SALT_ROUNDS = 12;
