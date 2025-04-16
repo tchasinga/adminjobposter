@@ -153,36 +153,43 @@ export const MobileSidebar = ({
     </>
   );
 };
-
-export const SidebarLink = ({
+export function SidebarLink({
   link,
-  className,
+  isActive = false,
   ...props
 }: {
-  link: Links;
-  className?: string;
-}) => {
+  link: SidebarLinkType;
+  isActive?: boolean;
+} & React.ComponentPropsWithoutRef<"a">) {
   const { open, animate } = useSidebar();
+  
   return (
     <a
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
-        className
+        "flex items-center justify-start gap-2 group/sidebar py-2",
+        "rounded-md px-3 text-sm font-medium transition-colors",
+        "hover:bg-gray-100 dark:hover:bg-neutral-700",
+        isActive 
+          ? "bg-gray-200 dark:bg-neutral-700 text-black dark:text-white" 
+          : "text-neutral-700 dark:text-neutral-200",
+        !open && "justify-center"
       )}
       {...props}
     >
-      {link.icon}
-
+      <span className={cn("flex items-center justify-center")}>
+        {link.icon}
+      </span>
       <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        initial={{ opacity: 0 }}
+        animate={open ? { opacity: 1 } : { opacity: 0 }}
+        className={cn(
+          "whitespace-nowrap",
+          !open && "hidden"
+        )}
       >
         {link.label}
       </motion.span>
     </a>
   );
-};
+}
