@@ -1,28 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
-"use client"
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useRouter } from 'next/navigation';
-import {Separator } from '@/components/ui/separator';
+"use client";
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation'
+import { SidebarDemo } from '../Page/SidebarDemo';
+
 
 export default function Dashboard() {
-  const currentUser = useSelector((state: any) => state.user && state.user.user.currentUser);
-    const router = useRouter();
-  
-    useEffect(() => {
-      if (!currentUser?.user) {
-        router.push("/signin");
-      }
-    }, [currentUser, router]);
+  const currentUser = useSelector(
+    (state: any) => state.user?.user?.currentUser
+  );
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push("/login")
+    }
+  }, [currentUser, router])
+
+  if (!currentUser) {
+    return <div>Loading...</div> // Show loading state while checking auth
+  }
+
+  console.log('Current User:', currentUser);
 
   return (
-    <div className='max-w-screen-2xl mx-auto px-5 mt-9'>
-        <h1>This is my dashboard</h1>
-        <h1>{currentUser?.user.name}</h1>
-        <Separator />
-
-        
+    <div className="max-w-max-w-screen-xl min-h-full mx-auto px-5 mt-9">
+     <SidebarDemo />
     </div>
-  )
+  );
 }

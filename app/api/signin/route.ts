@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         status: 429, 
         headers: { 
           'Retry-After': '900',
-          'X-RateLimit-Limit': '5',
+          'X-RateLimit-Limit': '100',
           'X-RateLimit-Remaining': '0'
         } 
       }
@@ -136,6 +136,7 @@ export async function POST(request: Request) {
       {
         user: {
           _id: user._id,
+          username: user.username,
           email: user.email,
           admins: user.admins,
           createdAt: user.createdAt,
@@ -148,15 +149,12 @@ export async function POST(request: Request) {
 
     response.cookies.set('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 15 * 60,
-      path: '/'
     });
 
     response.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 1 * 24 * 60 * 60,
     });
