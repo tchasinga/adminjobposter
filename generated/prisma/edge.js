@@ -154,12 +154,11 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "postgresql://ecomerceside_owner:npg_YQA1q3lIuWwr@ep-falling-morning-a8jetbcx-pooler.eastus2.azure.neon.tech/ecomerceside?sslmode=require"
       }
     }
   },
