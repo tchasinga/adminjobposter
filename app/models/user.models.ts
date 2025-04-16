@@ -8,6 +8,8 @@ interface IUser extends Document {
     email: string;
     password: string;
     admins: boolean;
+    loginAttempts: number; // Added loginAttempts property
+    lockedUntil: Date | null; // Added lockedUntil property
     createdAt: Date;
     updatedAt: Date;
 }
@@ -47,6 +49,15 @@ const UserSchema = new Schema<IUser, IUserModel>({
         type: Boolean,
         default: false,
     },
+    loginAttempts: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      lockedUntil: {
+        type: Date,
+        default: null
+      }
 }, { timestamps: true });
 
 UserSchema.post('validate', function (user: IUser) {
