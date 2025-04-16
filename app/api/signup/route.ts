@@ -1,58 +1,96 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// app/api/signup/route.ts
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { connectToDatabase } from '@/lib/mongodb';
+import User from '@/app/models/user.models';
 
+export async function POST(request: Request) {
+  try {
+    // Connect to database with timeout handling
+    await connectToDatabase().catch(err => {
+      console.error('Database connection error:', err);
+      throw new Error('Database connection failed');
+    });
 
+    const { username, email, password } = await request.json();
 
-const prisma = new PrismaClient()
-
-
-// adding signup route
-export async function POST(req: Request) {
-    try {
-        const body = await req.json();
-        const { email, password, name }: { email: string; password: string; name?: string } = body;
-
-        // Check if the user already exists
-        const existingUser = await prisma.user.findUnique({
-            where: { email },
-        });
-
-        if (existingUser) {
-            return NextResponse.json({ message: 'User already exists' }, { status: 400 });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create the user
-        const user = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword,
-            },
-        });
-
-        // Generate a JWT token for user authentication
-        if (!process.env.SECRET_KEY_JWT) {
-            throw new Error('SECRET_KEY_JWT is not defined');
-        }
-        const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY_JWT, {
-            expiresIn: "1d",
-        });
-
-        return NextResponse.json({
-            message: 'User created successfully',
-            user: {
-                token,
-                name: user.name,
-                email: user.email,
-            },
-        }, { status: 201 });
-    } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        return NextResponse.json({ message: 'Something went wrong', error: errorMessage }, { status: 500 });
+    if (!username || !email || !password) {
+      return NextResponse.json(
+        { error: 'Username, email and password are required' },
+        { status: 400 }
+      );
     }
+
+    // Add email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    // Check if user exists with timeout (either by email or username)
+    const existingUser = await User.findOne({
+      $or: [
+        { email },
+        { username }
+      ]
+    })
+      .maxTimeMS(5000) // 5 second timeout
+      .exec()
+      .catch(err => {
+        console.error('Database query error:', err);
+        throw new Error('Database operation failed');
+      });
+
+    if (existingUser) {
+      const conflictField = existingUser.email === email ? 'email' : 'username';
+      return NextResponse.json(
+        { error: `User with this ${conflictField} already exists` },
+        { status: 409 }
+      );
+    }
+
+    const user = new User({ username, email, password });
+    const savedUser = await user.save();
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is not defined');
+    }
+
+    const token = jwt.sign(
+      { userId: savedUser._id, email: savedUser.email, username: savedUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    const userWithoutPassword = savedUser.toObject();
+    if ('password' in userWithoutPassword) {
+      delete (userWithoutPassword as { password?: string }).password;
+    }
+
+    return NextResponse.json(
+      { 
+        user: userWithoutPassword, 
+        token,
+        message: 'Signup successful' 
+      },
+      { status: 201 }
+    );
+
+  } catch (error: any) {
+    console.error('Signup error:', error.message);
+    
+    const status = error.message.includes('Database') ? 503 : 500;
+    const message = status === 503 
+      ? 'Service unavailable' 
+      : 'Internal server error';
+
+    return NextResponse.json(
+      { error: message },
+      { status }
+    );
+  }
 }
