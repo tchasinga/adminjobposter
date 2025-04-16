@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,6 +15,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,19 +33,38 @@ export default function Login() {
     }
 
     setIsLoading(true);
+    dispatch(signInStart());
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Replace with actual authentication logic
-      if (email === 'admin@example.com' && password === 'admin123') {
-        router.push('/admin/dashboard');
-      } else {
-        setError('Invalid credentials');
+      const response = await fetch('/api/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+
+      // Handle successful login
+      dispatch(signInSuccess(data.user));
+      toast.success('Login successful');
+      
+      // Redirect based on user role
+      if (data.user.admins) {
+        router.push('/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
+
+    } catch (err: any) {
+      dispatch(signInFailure(err.message));
+      setError(err.message || 'An error occurred. Please try again.');
+      toast.error(err.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
