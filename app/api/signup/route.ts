@@ -125,6 +125,7 @@ export async function POST(req: Request) {
     // Prepare response data (excluding sensitive information)
     const responseData = {
       success: true,
+        message: 'User created successfully',
       data: {
         token,
         user: {
