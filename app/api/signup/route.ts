@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt';
@@ -6,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 
 // adding signup route
@@ -52,7 +51,8 @@ export async function POST(req: Request) {
                 email: user.email,
             },
         }, { status: 201 });
-    } catch (error: any) {
-        return NextResponse.json({ message: 'Something went wrong', error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ message: 'Something went wrong', error: errorMessage }, { status: 500 });
     }
 }
