@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+APIS documentation
 
-## Getting Started
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Dashboard APIs (3)
+#	Endpoint	Method	Description
+1	/api/dashboard/stats	GET	Fetch summary stats (jobs, applicants)
+2	/api/dashboard/applicants-chart	GET	Data for monthly applicants chart (
+   			# Default (12 months, grouped by month)
+        		GET /api/dashboard/applicants-chart
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+			# Last 6 months weekly data
+			GET /api/dashboard/applicants-chart?months=6&groupBy=week
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+			# Last 30 days daily data
+			GET /api/dashboard/applicants-chart?months=1&groupBy=day
+			)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+3	/api/dashboard/jobs-chart	GET	Data for job type distribution pie chart
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+====================================================
 
-## Deploy on Vercel
+Job Posting APIs (4)
+   /api/jobs	        GET	      List all job postings (with filters) and GET /api/jobs?poll=true (if you wanna use it)
+   /api/jobs       	POST	Create new job posting
+   /api/jobs/:id	DELETE	Close/delete a job and /api/jobs/[jobId]?action=close and DELETE /api/jobs/[jobId]?action=delete or /api/jobs/:id
+   /api/jobs/:id	PUT	Update a job posting
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+======================================================
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Applicants APIs (4)
+ 
+ /api/applicants	        GET	List applicants (search/filter support) and /api/applicants?search=(Search across name, email, company, telegram) or /api/applicants?status=hired (Get all hired applicants) or /api/applicants for general get request
+
+ /api/applicants/:id	        GET	Get single applicant details
+ /api/applicants/:id/status	PUT	Update status (e.g., "hired")
+ /api/applicants/export	GET	Export applicants to CSV/PDF(
+    		# Export to CSV (default)
+    		GET /api/applicants/export
+
+   		 # Explicit CSV export
+    		 GET /api/applicants/export?format=csv
+
+    		# PDF export
+    		GET /api/applicants/export?format=pdf)
+ 
+
+=============================================================================
+
+remember we are using mongoDb as Database our ID will always be called 
+like this _id whenever we want to access any id on frontend we will
+access it like this _id
+   
