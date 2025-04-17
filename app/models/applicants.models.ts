@@ -8,12 +8,13 @@ interface IApplicant extends Document {
     appliedJobs: string[];
     salaryExpectation: number;
     experienceLevel: string;
-    uploadResume: string; // Assuming this will be a URL or file path
+    uploadResume: string;
     casinoExperience: boolean;
     strokeIgaming: boolean;
     previousCompany: string;
     previousAchievements: string[];
-    availability: string; // Assuming availability is a string (e.g., "Full-time", "Part-time")
+    availability: string;
+    status: 'pending' | 'reviewed' | 'rejected' | 'hired';
 }
 
 const ApplicantSchema = new Schema<IApplicant>({
@@ -30,9 +31,13 @@ const ApplicantSchema = new Schema<IApplicant>({
     previousCompany: { type: String },
     previousAchievements: { type: [String], default: [] },
     availability: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['pending', 'reviewed', 'rejected', 'hired'],
+      default: 'pending'
+    }
 });
 
-const Applicant =
-    models.Applicant || model<IApplicant>("Applicant", ApplicantSchema);
+const Applicant = models.Applicant || model<IApplicant>("Applicant", ApplicantSchema);
 
 export default Applicant;
