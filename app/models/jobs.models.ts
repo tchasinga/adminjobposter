@@ -17,8 +17,10 @@ interface IJob extends Document {
     jobrequirementskills : string;
     jobresponsibilities : string;
     contractTerm : string;
+    status: string;
     createdAt: Date;
     updatedAt: Date;
+    closedAt?: Date;
 }
 
 
@@ -86,6 +88,14 @@ const JobSchema = new Schema<IJob>({
         type: String,
         required: [true, 'Contract term is required'],
     },
+    status: {
+        type: String,
+        enum: ['active', 'closed'],
+        default: 'active'
+      },
+      closedAt: {
+        type: Date
+      }
 }, { timestamps: true });
 
 const Job = (models.Job || model<IJob>('Job', JobSchema));
