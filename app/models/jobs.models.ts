@@ -11,6 +11,7 @@ interface IJob extends Document {
     country: string;
     salary: string;
     description: string;
+    cardImgIcon : string;
     bgdetailspage: string;
     projectdescription: string;
     jobrequirementskills : string;
@@ -59,6 +60,12 @@ const JobSchema = new Schema<IJob>({
         type: String,
         required: [true, 'Description is required'],
     },
+
+    cardImgIcon: {
+        type: String,
+        required: [true, 'Card image icon is required'],
+    },
+
     bgdetailspage: {
         type: String,
         required: [true, 'Background details page is required'],
