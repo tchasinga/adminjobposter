@@ -15,6 +15,8 @@ interface IApplicant extends Document {
     previousAchievements: string[];
     availability: string;
     status: 'pending' | 'reviewed' | 'rejected' | 'hired';
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const ApplicantSchema = new Schema<IApplicant>({
@@ -36,7 +38,7 @@ const ApplicantSchema = new Schema<IApplicant>({
       enum: ['pending', 'reviewed', 'rejected', 'hired'],
       default: 'pending'
     }
-});
+},{ timestamps: true });
 
 const Applicant = models.Applicant || model<IApplicant>("Applicant", ApplicantSchema);
 
