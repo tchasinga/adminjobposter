@@ -1,33 +1,43 @@
-import axios from 'axios';
-
-const API_BASE_URL = '/api';
+// services/dashboardService.ts
 
 export const fetchDashboardStats = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/dashboard/stats`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
-    throw error;
-  }
+  const res = await fetch('/api/dashboard/stats');
+  if (!res.ok) throw new Error('Failed to fetch dashboard stats');
+  const data = await res.json();
+  return {
+    totalJobs: data.data.overview.totalJobs,
+    activeJobs: data.data.overview.activeJobs,
+    totalApplicants: data.data.overview.totalApplicants,
+    newApplicants: data.data.overview.applicantsThisMonth
+  };
 };
 
-export const fetchApplicantsChartData = async (params = {}) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/dashboard/applicants-chart`, { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching applicants chart data:', error);
-    throw error;
-  }
+export const fetchApplicantsChartData = async ({ months = 6, groupBy = 'month' }: { months?: number; groupBy?: string }) => {
+  const res = await fetch(`/api/dashboard/applicants-chart?months=${months}&groupBy=${groupBy}`);
+  if (!res.ok) throw new Error('Failed to fetch applicants chart data');
+  const data = await res.json();
+  
+  // Transform the backend data to match the frontend chart format
+  return data.data.labels.map((label: string, index: number) => ({
+    name: label,
+    applicants: data.data.datasets.total[index],
+    pending: data.data.datasets.pending[index],
+    reviewed: data.data.datasets.reviewed[index],
+    hired: data.data.datasets.hired[index],
+    rejected: data.data.datasets.rejected[index]
+  }));
 };
 
 export const fetchJobsChartData = async () => {
-  try {
-    const response = await axios.get(`/api/dashboard/jobs-chart`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching jobs chart data:', error);
-    throw error;
-  }
+  const res = await fetch('/api/dashboard/jobs-chart');
+  if (!res.ok) throw new Error('Failed to fetch jobs chart data');
+  const data = await res.json();
+  
+  // Transform to pie chart format
+  return data.data.labels.map((label: string, index: number) => ({
+    name: label,
+    value: data.data.datasets[0].data[index],
+    percentage: data.data.datasets[0].percentages[index],
+    avgSalary: data.data.datasets[0].avgSalaries[index]
+  }));
 };

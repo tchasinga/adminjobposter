@@ -1,28 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import StatCard from "../Page/StatCard";
 import { IconBrandTabler, IconBriefcase, IconUserBolt, IconUsers } from "@tabler/icons-react";
-import { fetchDashboardStats, fetchApplicantsChartData, fetchJobsChartData } from "../../services/dashboardService";
+import { fetchDashboardStats, fetchApplicantsChartData } from "../../services/dashboardService";
 import { fetchApplicants } from "../../services/applicantService";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 type DashboardStats = {
   totalJobs: number;
   activeJobs: number;
   totalApplicants: number;
   newApplicants: number;
-};
-
-type ChartDataItem = {
-  name: string;
-  value: number;
-  [key: string]: any;
 };
 
 type Applicant = {
@@ -41,8 +33,7 @@ export const AdminDashboard = () => {
     totalApplicants: 0,
     newApplicants: 0
   });
-  const [monthlyApplicantsData, setMonthlyApplicantsData] = useState<ChartDataItem[]>([]);
-  const [applicantStatusData, setApplicantStatusData] = useState<ChartDataItem[]>([]);
+  const [monthlyApplicantsData, setMonthlyApplicantsData] = useState<any[]>([]);
   const [recentApplicants, setRecentApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,23 +68,10 @@ export const AdminDashboard = () => {
       setLoading(true);
       setError(null);
       
-      const [stats, applicantsChart, jobsChart, applicants] = await Promise.all([
-        fetchDashboardStats().catch(e => {
-          console.error("Failed to fetch stats:", e);
-          return null;
-        }),
-        fetchApplicantsChartData({ months: 6, groupBy: 'month' }).catch(e => {
-          console.error("Failed to fetch chart data:", e);
-          return [];
-        }),
-        fetchJobsChartData().catch(e => {
-          console.error("Failed to fetch jobs data:", e);
-          return [];
-        }),
-        fetchApplicants({ limit: 5, sort: '-createdAt' }).catch(e => {
-          console.error("Failed to fetch applicants:", e);
-          return [];
-        })
+      const [stats, applicantsChart, applicants] = await Promise.all([
+        fetchDashboardStats(),
+        fetchApplicantsChartData({ months: 6, groupBy: 'month' }),
+        fetchApplicants({ limit: 5, sort: '-createdAt' })
       ]);
 
       if (stats) {
@@ -106,14 +84,10 @@ export const AdminDashboard = () => {
       }
 
       setMonthlyApplicantsData(Array.isArray(applicantsChart) ? applicantsChart : []);
-      setApplicantStatusData(Array.isArray(jobsChart) ? jobsChart : []);
       
       const normalized = normalizeApplicants(applicants);
       setRecentApplicants(normalized);
 
-      if (normalized.length === 0) {
-        console.warn("No applicants data received", applicants);
-      }
     } catch (error) {
       console.error("Error in dashboard data fetch:", error);
       setError("Failed to load dashboard data. Please try again.");
@@ -137,8 +111,7 @@ export const AdminDashboard = () => {
             <Skeleton key={i} className="h-32 rounded-lg" />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Skeleton className="h-64 rounded-lg" />
+        <div className="grid grid-cols-1 gap-6">
           <Skeleton className="h-64 rounded-lg" />
         </div>
         <Skeleton className="h-64 rounded-lg" />
@@ -167,89 +140,52 @@ export const AdminDashboard = () => {
           title="Total Jobs" 
           value={dashboardStats.totalJobs} 
           icon={<IconBriefcase className="h-6 w-6" />}
-          trend="up"
-          percentage="12%"
+          
         />
         <StatCard 
           title="Active Jobs" 
           value={dashboardStats.activeJobs} 
           icon={<IconBrandTabler className="h-6 w-6" />}
-          trend="up"
-          percentage="5%"
+          
         />
         <StatCard 
           title="Total Applicants" 
           value={dashboardStats.totalApplicants} 
           icon={<IconUsers className="h-6 w-6" />}
-          trend="up"
-          percentage="24%"
+          
         />
         <StatCard 
           title="New Applicants" 
           value={dashboardStats.newApplicants} 
           icon={<IconUserBolt className="h-6 w-6" />}
-          trend="down"
-          percentage="3%"
+          
         />
       </div>
       
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
-          <h3 className="text-lg font-semibold mb-4">Monthly Applicants</h3>
-          <div className="h-64">
-            {monthlyApplicantsData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyApplicantsData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="applicants" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
-                No chart data available
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
-          <h3 className="text-lg font-semibold mb-4">Job Type Distribution</h3>
-          <div className="h-64">
-            {applicantStatusData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={applicantStatusData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {applicantStatusData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
-                No distribution data available
-              </div>
-            )}
-          </div>
+      {/* Monthly Applicants Chart - Single column now */}
+      <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800 mb-8">
+        <h3 className="text-lg font-semibold mb-4">Monthly Applicants</h3>
+        <div className="h-64">
+          {monthlyApplicantsData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyApplicantsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="applicants" name="Total Applicants" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full flex items-center justify-center text-gray-500">
+              No applicant data available
+            </div>
+          )}
         </div>
       </div>
       
-      {/* Recent Applicants */}
+      {/* Recent Applicants - Unchanged */}
       <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
         <h3 className="text-lg font-semibold mb-4">Recent Applicants</h3>
         <Table>
