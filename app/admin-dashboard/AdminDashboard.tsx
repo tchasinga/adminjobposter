@@ -1,11 +1,28 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import StatCard from "../Page/StatCard";
 import { IconBrandTabler, IconBriefcase, IconUserBolt, IconUsers } from "@tabler/icons-react";
-import { fetchDashboardStats, fetchApplicantsChartData } from "../../services/dashboardService";
+import { 
+  fetchDashboardStats, 
+  fetchApplicantsChartData,
+  fetchJobsChartData 
+} from "../../services/dashboardService";
 import { fetchApplicants } from "../../services/applicantService";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +43,12 @@ type Applicant = {
   status: "pending" | "reviewed" | "rejected" | "hired";
 };
 
+type JobsChartData = {
+  byType: { _id: string; count: number }[];
+  byCareer: { _id: string; count: number }[];
+  bySystem: { _id: string; count: number }[];
+};
+
 export const AdminDashboard = () => {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalJobs: 0,
@@ -35,10 +58,12 @@ export const AdminDashboard = () => {
   });
   const [monthlyApplicantsData, setMonthlyApplicantsData] = useState<any[]>([]);
   const [recentApplicants, setRecentApplicants] = useState<Applicant[]>([]);
+  const [jobsChartData, setJobsChartData] = useState<JobsChartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const POLLING_INTERVAL = 30000;
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   const normalizeApplicants = (data: any): Applicant[] => {
     if (!Array.isArray(data)) {
@@ -68,10 +93,11 @@ export const AdminDashboard = () => {
       setLoading(true);
       setError(null);
       
-      const [stats, applicantsChart, applicants] = await Promise.all([
+      const [stats, applicantsChart, applicants, jobsChart] = await Promise.all([
         fetchDashboardStats(),
         fetchApplicantsChartData({ months: 6, groupBy: 'month' }),
-        fetchApplicants({ limit: 5, sort: '-createdAt' })
+        fetchApplicants({ limit: 5, sort: '-createdAt' }),
+        fetchJobsChartData()
       ]);
 
       if (stats) {
@@ -87,6 +113,10 @@ export const AdminDashboard = () => {
       
       const normalized = normalizeApplicants(applicants);
       setRecentApplicants(normalized);
+
+      if (jobsChart?.success) {
+        setJobsChartData(jobsChart.data);
+      }
 
     } catch (error) {
       console.error("Error in dashboard data fetch:", error);
@@ -111,9 +141,12 @@ export const AdminDashboard = () => {
             <Skeleton key={i} className="h-32 rounded-lg" />
           ))}
         </div>
-        <div className="grid grid-cols-1 gap-6">
-          <Skeleton className="h-64 rounded-lg" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-64 rounded-lg" />
+          ))}
         </div>
+        <Skeleton className="h-64 rounded-lg" />
         <Skeleton className="h-64 rounded-lg" />
       </div>
     );
@@ -140,29 +173,158 @@ export const AdminDashboard = () => {
           title="Total Jobs" 
           value={dashboardStats.totalJobs} 
           icon={<IconBriefcase className="h-6 w-6" />}
-          
         />
+
         <StatCard 
           title="Active Jobs" 
           value={dashboardStats.activeJobs} 
           icon={<IconBrandTabler className="h-6 w-6" />}
-          
         />
         <StatCard 
           title="Total Applicants" 
           value={dashboardStats.totalApplicants} 
           icon={<IconUsers className="h-6 w-6" />}
-          
         />
         <StatCard 
           title="New Applicants" 
           value={dashboardStats.newApplicants} 
           icon={<IconUserBolt className="h-6 w-6" />}
-          
         />
       </div>
       
-      {/* Monthly Applicants Chart - Single column now */}
+      {/* Jobs Distribution Charts */}
+      <div className="flex flex-wrap gap-4 mb-8">
+        {/* Jobs by Type Chart */}
+        <div className="flex-1 bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
+          <h3 className="text-lg font-semibold mb-4">Jobs by Type</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-64">
+              {jobsChartData?.byType?.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={jobsChartData.byType}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      innerRadius={40}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {jobsChartData.byType.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-500">
+                  No job type data available
+                </div>
+              )}
+            </div>
+            <ul className="flex-1 text-sm space-y-2">
+              {jobsChartData?.byType?.map((type, index) => (
+                <li key={type._id} className="flex justify-between">
+                  <span>{type._id}</span>
+                  <span className="font-medium">{type.count}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Jobs by Career Chart */}
+        <div className="flex-1 bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
+          <h3 className="text-lg font-semibold mb-4">Jobs by Career</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-64">
+              {jobsChartData?.byCareer?.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={jobsChartData.byCareer}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      innerRadius={40}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {jobsChartData.byCareer.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-500">
+                  No career data available
+                </div>
+              )}
+            </div>
+            <ul className="flex-1 text-sm space-y-2">
+              {jobsChartData?.byCareer?.map((career, index) => (
+                <li key={career._id} className="flex justify-between">
+                  <span>{career._id}</span>
+                  <span className="font-medium">{career.count}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Jobs by System Chart */}
+        <div className="flex-1 bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
+          <h3 className="text-lg font-semibold mb-4">Jobs by System</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-64">
+              {jobsChartData?.bySystem?.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={jobsChartData.bySystem}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      innerRadius={40}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {jobsChartData.bySystem.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-500">
+                  No system data available
+                </div>
+              )}
+            </div>
+            <ul className="flex-1 text-sm space-y-2">
+              {jobsChartData?.bySystem?.map((system, index) => (
+                <li key={system._id} className="flex justify-between">
+                  <span>{system._id}</span>
+                  <span className="font-medium">{system.count}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      {/* Monthly Applicants Chart */}
       <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800 mb-8">
         <h3 className="text-lg font-semibold mb-4">Monthly Applicants</h3>
         <div className="h-64">
@@ -185,8 +347,8 @@ export const AdminDashboard = () => {
         </div>
       </div>
       
-      {/* Recent Applicants - Unchanged */}
-      <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
+       {/* Recent Applicants */}
+       <div className="bg-white p-4 rounded-lg shadow dark:bg-neutral-800">
         <h3 className="text-lg font-semibold mb-4">Recent Applicants</h3>
         <Table>
           <TableHeader>

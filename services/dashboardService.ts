@@ -29,15 +29,9 @@ export const fetchApplicantsChartData = async ({ months = 6, groupBy = 'month' }
 };
 
 export const fetchJobsChartData = async () => {
-  const res = await fetch('/api/dashboard/jobs-chart');
-  if (!res.ok) throw new Error('Failed to fetch jobs chart data');
-  const data = await res.json();
-  
-  // Transform to pie chart format
-  return data.data.labels.map((label: string, index: number) => ({
-    name: label,
-    value: data.data.datasets[0].data[index],
-    percentage: data.data.datasets[0].percentages[index],
-    avgSalary: data.data.datasets[0].avgSalaries[index]
-  }));
+  const response = await fetch('/api/dashboard/jobs-chart');
+  if (!response.ok) {
+    throw new Error('Failed to fetch jobs chart data');
+  }
+  return response.json();
 };
