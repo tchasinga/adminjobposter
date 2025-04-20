@@ -19,9 +19,9 @@ export const fetchApplicants = async (params = {}) => {
   }
 };
 
-export const fetchApplicantDetails = async (id: string) => {
+export const fetchApplicantDetails = async (_id: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/applicants/${id}`);
+    const response = await axios.get(`http://localhost:3000/api/applicants/${_id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching applicant details:', error);

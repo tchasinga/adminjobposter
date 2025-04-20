@@ -32,6 +32,7 @@ import {
   updateApplicantStatus,
   exportApplicants,
 } from "../../services/applicantService";
+import Link from "next/link";
 
 interface Applicant {
   _id: string;
@@ -224,9 +225,11 @@ const ApplicantsSection = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
+                      <Link href={`/applicantdetails/${applicant._id}`}>
                       <Button variant="outline" size="sm">
                         View
                       </Button>
+                      </Link>
                       <Button variant="outline" size="sm">
                         Download CV
                       </Button>
