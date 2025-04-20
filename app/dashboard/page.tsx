@@ -24,7 +24,6 @@ export default function Dashboard() {
     return <div>Loading...</div> // Show loading state while checking auth
   }
 
-  console.log('Current User:', currentUser);
 
   return (
     <div className="max-w-max-w-screen-xl min-h-full mx-auto px-5 mt-9">

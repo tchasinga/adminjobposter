@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+import React, {useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
@@ -10,8 +10,8 @@ import {
   IconUsers,
   IconFileAnalytics,
 } from "@tabler/icons-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
 
 
 import { LogOutIcon, LogsIcon } from "lucide-react";
@@ -25,6 +25,14 @@ import SettingsSection from "../admin-dashboard/SettingsSection";
 export function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+
+
+
+
+ 
+
+  // Inside links or ApplicantsSection handler
+
 
   const links = [
     {
@@ -124,6 +132,7 @@ export function SidebarDemo() {
         {activeTab === "applicants" && <ApplicantsSection />}
         {activeTab === "reports" && <ReportsSection />}
         {activeTab === "settings" && <SettingsSection />}
+      
       </div>
     </div>
   );

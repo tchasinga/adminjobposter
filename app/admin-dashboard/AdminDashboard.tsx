@@ -23,9 +23,12 @@ import {
   fetchApplicantsChartData,
   fetchJobsChartData 
 } from "../../services/dashboardService";
+
+import Link from "next/link";
 import { fetchApplicants } from "../../services/applicantService";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from 'next/navigation'
 
 type DashboardStats = {
   totalJobs: number;
@@ -56,6 +59,10 @@ export const AdminDashboard = () => {
     totalApplicants: 0,
     newApplicants: 0
   });
+
+  const router = useRouter();
+
+
   const [monthlyApplicantsData, setMonthlyApplicantsData] = useState<any[]>([]);
   const [recentApplicants, setRecentApplicants] = useState<Applicant[]>([]);
   const [jobsChartData, setJobsChartData] = useState<JobsChartData | null>(null);
@@ -380,7 +387,14 @@ export const AdminDashboard = () => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm">View</Button>
+                    <Link href={`/applicantdetails/${applicant._id}`}>
+<Button 
+  variant="outline" 
+  size="sm"
+>
+  View
+</Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))
