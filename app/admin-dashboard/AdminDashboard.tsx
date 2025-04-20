@@ -69,7 +69,7 @@ export const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const POLLING_INTERVAL = 30000;
+  const POLLING_INTERVAL = 1800000;
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   const normalizeApplicants = (data: any): Applicant[] => {

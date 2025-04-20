@@ -43,6 +43,7 @@ interface Applicant {
   status: "pending" | "reviewed" | "rejected" | "hired";
   country?: string;
   salaryExpectation?: number;
+  uploadResume: string;
   [key: string]: any;
 }
 
@@ -230,9 +231,11 @@ const ApplicantsSection = () => {
                         View
                       </Button>
                       </Link>
+                      <a href={applicant.uploadResume} rel="noopener noreferrer" target="_blank">
                       <Button variant="outline" size="sm">
                         Download CV
                       </Button>
+                      </a>
                     </div>
                   </TableCell>
                 </TableRow>
