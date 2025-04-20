@@ -19,7 +19,6 @@ import { AdminDashboard } from "../admin-dashboard/AdminDashboard";
 import JobPostingSection from "../admin-dashboard/JobPostingSection";
 import ApplicantsSection from "../admin-dashboard/ApplicantsSection";
 import ReportsSection from "../admin-dashboard/ReportsSection";
-import SettingsSection from "../admin-dashboard/SettingsSection";
 
 // Main Component
 export function SidebarDemo() {
@@ -60,14 +59,6 @@ export function SidebarDemo() {
       onClick: () => setActiveTab("reports"),
     },
     {
-      label: "Settings",
-      href: "#",
-      icon: (
-        <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-      onClick: () => setActiveTab("settings"),
-    },
-    {
       label: "Logout",
       href: "#",
       icon: (
@@ -79,7 +70,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "flex min-h-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
+        "flex min-h-full flex-1 flex-col overflow-hidden border-neutral-200 bg-gray-100 md:flex-row ",
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>

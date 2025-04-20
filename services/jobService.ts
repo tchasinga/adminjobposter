@@ -19,13 +19,24 @@ export const fetchJobs = async (poll = false) => {
     throw error;
   }
 };
-
 export const createJob = async (jobData: any) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/jobs`, jobData);
-    return response.data;
+    const response = await axios.post('/api/jobs', jobData, {
+      headers: {
+        'Content-Type': 'application/json', // Explicitly set JSON content type
+      },
+      transformRequest: [(data) => JSON.stringify(data)], // Ensure proper serialization
+    });
+    return response.data.job;
   } catch (error) {
-    console.error('Error creating job:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        config: error.config,
+      });
+      throw new Error(error.response?.data?.message || 'Failed to create job');
+    }
     throw error;
   }
 };
@@ -33,7 +44,7 @@ export const createJob = async (jobData: any) => {
 export const updateJob = async (id: string, jobData: any) => {
   try {
     const response = await axios.put(`${API_BASE_URL}/jobs/${id}`, jobData);
-    return response.data;
+    return response.data; 
   } catch (error) {
     console.error('Error updating job:', error);
     throw error;

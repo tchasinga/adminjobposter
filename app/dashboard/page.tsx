@@ -26,7 +26,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className="">
+    <div className="border-neutral-200 bg-gray-100">
      <SidebarDemo />
     </div>
   );

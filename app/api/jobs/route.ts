@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
@@ -7,17 +8,37 @@ import Job from "@/app/models/jobs.models";
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
-    const body = await request.json();
+    
+    // Verify Content-Type header
+    const contentType = request.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      return NextResponse.json(
+        { error: 'Content-Type must be application/json' },
+        { status: 415 }
+      );
+    }
 
+    // Safely parse JSON
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Invalid JSON payload' },
+        { status: 400 }
+      );
+    }
+
+    // Validate required fields
     const requiredFields = [
-      'title', 'typeofcarees', 'typeofworks', 'typeofsystem', 
-      'questionone', 'questiontwo', 'cardImgIcon', 'country', 'salary', 
-      'description', 'bgdetailspage', 'projectdescription', 
-      'jobrequirementskills', 'jobresponsibilities', 'contractTerm'
+      'title', 'typeofcarees', 'typeofworks', 'typeofsystem',
+      'questionone', 'questiontwo', 'country', 'salary',
+      'description', 'projectdescription',
+      'jobrequirementskills', 'jobresponsibilities',
+      'contractTerm'
     ];
 
     const missingFields = requiredFields.filter(field => !body[field]);
-    
     if (missingFields.length > 0) {
       return NextResponse.json(
         { error: `Missing required fields: ${missingFields.join(', ')}` },
@@ -25,6 +46,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Create job with explicit field mapping (avoid ...body)
     const newJob = new Job({
       title: body.title,
       typeofcarees: body.typeofcarees,
@@ -33,12 +55,11 @@ export async function POST(request: NextRequest) {
       questionone: body.questionone,
       questiontwo: body.questiontwo,
       country: body.country,
-      ...body,
-       status: body.status || 'active',
+      status: body.status || 'active',
       salary: body.salary,
       description: body.description,
-      cardImgIcon: body.cardImgIcon,
-      bgdetailspage: body.bgdetailspage,
+      cardImgIcon: body.cardImgIcon || null,  // Handle optional files
+      bgdetailspage: body.bgdetailspage || null,
       projectdescription: body.projectdescription,
       jobrequirementskills: body.jobrequirementskills,
       jobresponsibilities: body.jobresponsibilities,
@@ -55,11 +76,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating job:", error);
     return NextResponse.json(
-      { error: "Failed to create job" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
+
 
 export async function GET(request: NextRequest) {
     try {

@@ -65,12 +65,10 @@ const JobSchema = new Schema<IJob>({
 
     cardImgIcon: {
         type: String,
-        required: [true, 'Card image icon is required'],
     },
 
     bgdetailspage: {
         type: String,
-        required: [true, 'Background details page is required'],
     },
     projectdescription: {
         type: String,
