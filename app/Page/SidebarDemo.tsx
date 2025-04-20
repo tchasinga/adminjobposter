@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 import { LogOutIcon, LogsIcon } from "lucide-react";
 import { AdminDashboard } from "../admin-dashboard/AdminDashboard";
-import { JobPostingSection } from "../admin-dashboard/JobPostingSection";
+import JobPostingSection from "../admin-dashboard/JobPostingSection";
 import ApplicantsSection from "../admin-dashboard/ApplicantsSection";
 import ReportsSection from "../admin-dashboard/ReportsSection";
 import SettingsSection from "../admin-dashboard/SettingsSection";
@@ -25,14 +25,6 @@ import SettingsSection from "../admin-dashboard/SettingsSection";
 export function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-
-
-
-
- 
-
-  // Inside links or ApplicantsSection handler
-
 
   const links = [
     {
@@ -87,8 +79,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-screen min-h-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-        "h-[90vh]",
+        "flex min-h-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>

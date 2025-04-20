@@ -40,6 +40,8 @@ export const updateJob = async (id: string, jobData: any) => {
   }
 };
 
+
+
 export const closeOrDeleteJob = async (id: string, action: 'close' | 'delete') => {
   try {
     const response = await axios.delete(`${API_BASE_URL}/jobs/${id}`, { 
