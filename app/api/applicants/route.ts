@@ -106,7 +106,6 @@ export async function POST(request: NextRequest) {
 }
 
 
-// GET /api/applicants for getting all applicants and List applicants (search/filter support)
 
 // GET /api/applicants - Get all applicants with optional filtering
 export async function GET(request: NextRequest) {
