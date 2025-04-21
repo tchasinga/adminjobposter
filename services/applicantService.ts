@@ -21,7 +21,7 @@ export const fetchApplicants = async (params = {}) => {
 
 export const fetchApplicantDetails = async (_id: string) => {
   try {
-    const response = await axios.get(`/api/applicants/${_id}`);
+    const response = await axios.get(`https://kuvoshadmin.vercel.app/api/applicants/${_id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching applicant details:', error);
