@@ -29,7 +29,7 @@ interface Applicant {
 
 async function getApplicantDetails(id: string): Promise<Applicant | null> {
   try {
-    const res = await fetch(`http://localhost:3000/api/applicants/${id}`, {
+    const res = await fetch(`/api/applicants/${id}`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
