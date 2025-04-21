@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Applicant from "@/app/models/applicants.models";
@@ -35,18 +34,18 @@ export async function GET(
 
     // Return the applicant data with success message
     return NextResponse.json(
-      {
+      { 
         message: "Applicant retrieved successfully",
-        applicant,
+        applicant 
       },
       { status: 200 }
     );
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching applicant:", error);
-
-    // Handle invalid MongoDB ObjectId format (CastError)
-    if (error.name === "CastError") {
+    
+    // Handle specific MongoDB CastError (invalid ID format)
+    if (error instanceof Error && error.name === 'CastError') {
       return NextResponse.json(
         { error: "Invalid applicant ID format" },
         { status: 400 }
