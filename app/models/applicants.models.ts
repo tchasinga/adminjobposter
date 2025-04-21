@@ -9,6 +9,7 @@ interface IApplicant extends Document {
     salaryExpectation: number;
     experienceLevel: string;
     uploadResume: string;
+    validedPhonenumber: string;
     casinoExperience: boolean;
     strokeIgaming: boolean;
     previousCompany: string;
@@ -28,6 +29,7 @@ const ApplicantSchema = new Schema<IApplicant>({
     salaryExpectation: { type: Number, required: true },
     experienceLevel: { type: String, required: true },
     uploadResume: { type: String },
+    validedPhonenumber: { type: String },
     casinoExperience: { type: Boolean, default: false },
     strokeIgaming: { type: Boolean, default: false },
     previousCompany: { type: String },

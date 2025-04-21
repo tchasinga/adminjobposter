@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       salaryExpectation: Number(body.salaryExpectation),
       experienceLevel: body.experienceLevel,
       uploadResume: body.uploadResume || '',
+      validedPhonenumber: body.validedPhonenumber || '',
       casinoExperience: Boolean(body.casinoExperience) || false,
       strokeIgaming: Boolean(body.strokeIgaming) || false,
       previousCompany: body.previousCompany || '',
