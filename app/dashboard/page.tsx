@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/rules-of-hooks */
+ 
 "use client";
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
