@@ -7,12 +7,8 @@ import {
   IconBrandTabler,
   IconBriefcase,
   IconUsers,
-  IconFileAnalytics,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-
-
-
 import { LogOutIcon, LogsIcon } from "lucide-react";
 import { AdminDashboard } from "../admin-dashboard/AdminDashboard";
 import JobPostingSection from "../admin-dashboard/JobPostingSection";
@@ -25,21 +21,24 @@ export function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
 
-   const currentUser = useSelector(
-      (state: any) => state.user?.user?.currentUser
-    );
+  const currentUser = useSelector((state: any) => state.user?.user?.currentUser);
   
-    const router = useRouter()
+  const router = useRouter()
   
-    useEffect(() => {
-      if (!currentUser) {
-        router.push("/login")
-      }
-    }, [currentUser, router])
-  
+  useEffect(() => {
     if (!currentUser) {
-      return <div>Loading...</div> // Show loading state while checking auth
+      router.push("/login")
+    }else{
+      router.push('/dashboard')
     }
+  }, [currentUser, router])
+  
+  if (!currentUser) {
+    return <div>Loading...</div> // Show loading state while checking auth
+  }
+
+  // Format dates
+  const joinedDate = new Date(currentUser?.createdAt).toLocaleDateString();
 
   const links = [
     {
@@ -66,14 +65,6 @@ export function SidebarDemo() {
       ),
       onClick: () => setActiveTab("applicants"),
     },
-    {
-      label: "Reports",
-      href: "#",
-      icon: (
-        <IconFileAnalytics className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-      onClick: () => setActiveTab("reports"),
-    }
     
   ];
 
@@ -101,16 +92,20 @@ export function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Admin User now",
+                label: (
+                  <div className="flex flex-col space-y-1">
+                    <span className="text-xs text-neutral-500">{currentUser?.username}</span>
+                    <span className="text-xs text-neutral-400">
+                      Join sice: {joinedDate}
+                    </span>
+                    
+                  </div>
+                ),
                 href: "#",
                 icon: (
-                  <img
-                    src="https://assets.aceternity.com/manu.png"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white">
+                    {currentUser?.username?.charAt(0).toUpperCase()}
+                  </div>
                 ),
               }}
             />
@@ -126,7 +121,3 @@ export function SidebarDemo() {
     </div>
   );
 }
-
-
-   
-
