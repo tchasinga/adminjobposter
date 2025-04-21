@@ -63,7 +63,7 @@ export default async function ApplicantDetailsPage({
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-6">
-        <Link href="http://localhost:3000/dashboard">
+        <Link href="/dashboard">
           <Button variant="outline" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Applicants

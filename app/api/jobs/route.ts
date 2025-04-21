@@ -4,6 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Job from "@/app/models/jobs.models";
 
+// CORS headers configuration
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 // POST handler (existing)
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (!contentType?.includes('application/json')) {
       return NextResponse.json(
         { error: 'Content-Type must be application/json' },
-        { status: 415 }
+        { status: 415, headers: corsHeaders }
       );
     }
 
@@ -25,7 +32,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       return NextResponse.json(
         { error: 'Invalid JSON payload' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -42,7 +49,7 @@ export async function POST(request: NextRequest) {
     if (missingFields.length > 0) {
       return NextResponse.json(
         { error: `Missing required fields: ${missingFields.join(', ')}` },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -70,14 +77,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { message: "Job created successfully", job: savedJob },
-      { status: 201 }
+      { status: 201, headers: corsHeaders }
     );
 
   } catch (error) {
     console.error("Error creating job:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
@@ -148,7 +155,7 @@ export async function GET(request: NextRequest) {
                   contractTerm
                 }
               },
-              { status: 200 }
+              { status: 200, headers: corsHeaders }
             );
           }
         }
@@ -174,16 +181,25 @@ export async function GET(request: NextRequest) {
           },
           message: attempts >= maxAttempts ? 'Reached max polling attempts' : 'Data updated'
         },
-        { status: 200 }
+        { status: 200, headers: corsHeaders }
       );
   
     } catch (error) {
       console.error("Error fetching jobs:", error);
       return NextResponse.json(
         { error: "Failed to fetch jobs" },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
-  }
+}
 
-  
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    { 
+      status: 200,
+      headers: corsHeaders
+    }
+  );
+}
