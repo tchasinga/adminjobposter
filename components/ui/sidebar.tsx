@@ -159,7 +159,11 @@ export function SidebarLink({
   isActive = false,
   ...props
 }: {
-  link: SidebarLinkType;
+  link: {
+    label: string;
+    href: string;
+    icon: React.JSX.Element | React.ReactNode;
+  };
   isActive?: boolean;
 } & React.ComponentPropsWithoutRef<"a">) {
   const { open, animate } = useSidebar();
