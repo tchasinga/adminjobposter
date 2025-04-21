@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, {useState } from "react";
+import React, {useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
-  IconArrowLeft,
   IconBrandTabler,
-  IconSettings,
   IconBriefcase,
   IconUsers,
   IconFileAnalytics,
@@ -18,12 +17,29 @@ import { LogOutIcon, LogsIcon } from "lucide-react";
 import { AdminDashboard } from "../admin-dashboard/AdminDashboard";
 import JobPostingSection from "../admin-dashboard/JobPostingSection";
 import ApplicantsSection from "../admin-dashboard/ApplicantsSection";
-import ReportsSection from "../admin-dashboard/ReportsSection";
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation'
 
 // Main Component
 export function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+
+   const currentUser = useSelector(
+      (state: any) => state.user?.user?.currentUser
+    );
+  
+    const router = useRouter()
+  
+    useEffect(() => {
+      if (!currentUser) {
+        router.push("/login")
+      }
+    }, [currentUser, router])
+  
+    if (!currentUser) {
+      return <div>Loading...</div> // Show loading state while checking auth
+    }
 
   const links = [
     {
@@ -57,14 +73,8 @@ export function SidebarDemo() {
         <IconFileAnalytics className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
       onClick: () => setActiveTab("reports"),
-    },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
+    }
+    
   ];
 
   return (
@@ -91,7 +101,7 @@ export function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Admin User",
+                label: "Admin User now",
                 href: "#",
                 icon: (
                   <img
@@ -111,10 +121,7 @@ export function SidebarDemo() {
       <div className="flex flex-1 overflow-hidden">
         {activeTab === "dashboard" && <AdminDashboard />}
         {activeTab === "jobpostings" && <JobPostingSection />}
-        {activeTab === "applicants" && <ApplicantsSection />}
-        {activeTab === "reports" && <ReportsSection />}
-        {activeTab === "settings" && <SettingsSection />}
-      
+        {activeTab === "applicants" && <ApplicantsSection />}      
       </div>
     </div>
   );
