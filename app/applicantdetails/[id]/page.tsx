@@ -29,7 +29,7 @@ interface Applicant {
 
 async function getApplicantDetails(id: string): Promise<Applicant | null> {
   try {
-    const res = await fetch(`/api/applicants/${id}`, {
+    const res = await fetch(`https://kuvoshadmin.vercel.app/api/applicants/${id}`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
