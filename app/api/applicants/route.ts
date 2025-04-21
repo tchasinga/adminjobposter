@@ -3,6 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Applicant from "@/app/models/applicants.models";
 
+// CORS headers configuration
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
 // POST /api/applicants for creating new applies
 export async function POST(request: NextRequest) {
@@ -28,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (missingFields.length > 0) {
       return NextResponse.json(
         { error: `Missing required fields: ${missingFields.join(', ')}` },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -37,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (!emailRegex.test(body.email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -45,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (body.status && !['pending', 'reviewed', 'rejected', 'hired'].includes(body.status)) {
       return NextResponse.json(
         { error: "Invalid status value" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -76,7 +82,7 @@ export async function POST(request: NextRequest) {
         message: "Applicant created successfully",
         applicant: savedApplicant 
       },
-      { status: 201 }
+      { status: 201, headers: corsHeaders }
     );
 
   } catch (error: any) {
@@ -86,7 +92,7 @@ export async function POST(request: NextRequest) {
     if (error.code === 11000 && error.keyPattern?.email) {
       return NextResponse.json(
         { error: "Email already exists" },
-        { status: 409 }
+        { status: 409, headers: corsHeaders }
       );
     }
 
@@ -94,18 +100,16 @@ export async function POST(request: NextRequest) {
     if (error.name === 'ValidationError') {
       return NextResponse.json(
         { error: error.message },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
     return NextResponse.json(
       { error: "Failed to create applicant" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
-
-
 
 // GET /api/applicants - Get all applicants with optional filtering
 export async function GET(request: NextRequest) {
@@ -199,7 +203,7 @@ export async function GET(request: NextRequest) {
         hasIgamingExperience,
         availability
       }
-    }, { status: 200 });
+    }, { status: 200, headers: corsHeaders });
 
   } catch (error: any) {
     console.error("Error fetching applicants:", error);
@@ -209,7 +213,18 @@ export async function GET(request: NextRequest) {
         error: "Failed to fetch applicants",
         details: error.message 
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    { 
+      status: 200,
+      headers: corsHeaders
+    }
+  );
 }
