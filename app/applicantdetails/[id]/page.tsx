@@ -14,6 +14,7 @@ interface Applicant {
   appliedJobs: string[];
   salaryExpectation: number;
   experienceLevel: string;
+  validedPhonenumber: string;
   uploadResume: string;
   casinoExperience: boolean;
   strokeIgaming: boolean;
@@ -195,6 +196,13 @@ export default async function ApplicantDetailsPage({
                     <p className="text-sm text-gray-500">Telegram</p>
                     <p className="font-medium mt-1">
                       {applicant.telegramUsername ? `@${applicant.telegramUsername}` : 'Not specified'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">WhatSapp number</p>
+                    <p className="font-medium mt-1">
+                      {applicant.validedPhonenumber ? `${applicant.validedPhonenumber}` : 'Phone number no specified'}
                     </p>
                   </div>
                 </div>
