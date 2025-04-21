@@ -72,7 +72,7 @@ export default async function ApplicantDetailsPage({
       </div>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Header Section */}
+        {/* Header Section is good for view*/}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-start gap-4">
