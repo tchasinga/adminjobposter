@@ -5,10 +5,11 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Job from "@/app/models/jobs.models";
 
 // https://kuvosh.vercel.app
+// http://localhost:3001
 
 // CORS headers configuration
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Origin": "https://kuvosh.vercel.app",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
