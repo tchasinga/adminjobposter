@@ -200,15 +200,15 @@ export default function JobPostingForm() {
         <form onSubmit={handleSubmit} className="space-y-4 mb-8 p-6 border rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input name="title" placeholder="Job Title" value={formData.title} onChange={handleInputChange} required />
-            <Input name="typeofcarees" placeholder="Type of Career" value={formData.typeofcarees} onChange={handleInputChange} required />
-            <Input name="typeofworks" placeholder="Type of Work" value={formData.typeofworks} onChange={handleInputChange} required />
-            <Input name="typeofsystem" placeholder="Type of System" value={formData.typeofsystem} onChange={handleInputChange} required />
+            <Input name="typeofcarees" placeholder="Type of Career e.g affilliate marketer" value={formData.typeofcarees} onChange={handleInputChange} required />
+            <Input name="typeofworks" placeholder="Type of Work e.g full-time, part-time" value={formData.typeofworks} onChange={handleInputChange} required />
+            <Input name="typeofsystem" placeholder="Works system e.g onsite, remote, hybrid" value={formData.typeofsystem} onChange={handleInputChange} required />
             <Input name="country" placeholder="Country" value={formData.country} onChange={handleInputChange} required />
             <Input name="salary" placeholder="Salary" value={formData.salary} onChange={handleInputChange} required />
-            <Input name="contractTerm" placeholder="Contract Term" value={formData.contractTerm} onChange={handleInputChange} required />
+            <Input name="contractTerm" placeholder="Term of contract e.g permanent etc" value={formData.contractTerm} onChange={handleInputChange} required />
           </div>
 
-          <Textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required />
+          <Textarea name="description" placeholder="Description of jobs" value={formData.description} onChange={handleInputChange} required />
           <Textarea name="projectdescription" placeholder="Project Description" value={formData.projectdescription} onChange={handleInputChange} required />
           <Textarea name="jobrequirementskills" placeholder="Job Requirements & Skills" value={formData.jobrequirementskills} onChange={handleInputChange} required />
           <Textarea name="jobresponsibilities" placeholder="Job Responsibilities" value={formData.jobresponsibilities} onChange={handleInputChange} required />

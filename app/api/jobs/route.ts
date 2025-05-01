@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const requiredFields = [
       'title', 'typeofcarees', 'typeofworks', 'typeofsystem',
       'questionone', 'questiontwo', 'country', 'salary',
-      'description', 'projectdescription',
+      'description', 
       'jobrequirementskills', 'jobresponsibilities',
       'contractTerm'
     ];

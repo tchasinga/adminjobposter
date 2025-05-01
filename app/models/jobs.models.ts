@@ -72,7 +72,6 @@ const JobSchema = new Schema<IJob>({
     },
     projectdescription: {
         type: String,
-        required: [true, 'Project description is required'],
     },
     jobrequirementskills: {
         type: String,
