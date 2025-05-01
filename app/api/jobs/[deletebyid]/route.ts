@@ -3,6 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Job from "@/app/models/jobs.models";
 
+// Helper function to add CORS headers to responses
+const addCorsHeaders = (response: NextResponse) => {
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  return response;
+};
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { deletebyid: string } }
@@ -15,10 +23,11 @@ export async function DELETE(
     const jobId = params.deletebyid;
 
     if (!jobId) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Job ID is required" },
         { status: 400 }
       );
+      return addCorsHeaders(response);
     }
 
     let result;
@@ -39,13 +48,14 @@ export async function DELETE(
     }
 
     if (!result) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Job not found" },
         { status: 404 }
       );
+      return addCorsHeaders(response);
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
         message: action === 'close' 
           ? "Job closed successfully" 
@@ -59,104 +69,66 @@ export async function DELETE(
       },
       { status: 200 }
     );
+    return addCorsHeaders(response);
 
   } catch (error) {
     console.error("Error processing job:", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: `Failed to ${searchParams.get('action') === 'close' ? 'close' : 'delete'} job` },
       { status: 500 }
     );
+    return addCorsHeaders(response);
   }
 }
 
+// GET data by id
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { deletebyid: string } }
+) {
+  try {
+    await connectToDatabase();
+    const jobId = params.deletebyid;
 
-
-// PUT request handler for data updated
-export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-  ) {
-    try {
-      console.log("Params:", params); // Log for debugging
-      const jobId = params.id;
-  
-      if (!jobId) {
-        return NextResponse.json(
-          { error: "Job ID is required for the update" }, // Fixed typo
-          { status: 400 }
-        );
-      }
-  
-      await connectToDatabase();
-  
-      const body = await request.json();
-      const updatableFields = [
-        'title',
-        'typeofcarees',
-        'typeofworks',
-        'typeofsystem',
-        'questionone',
-        'questiontwo',
-        'country',
-        'salary',
-        'description',
-        'cardImgIcon',
-        'bgdetailspage',
-        'projectdescription',
-        'jobrequirementskills',
-        'jobresponsibilities',
-        'contractTerm',
-        'status',
-      ];
-  
-      const updateData: Record<string, any> = {};
-      for (const field of updatableFields) {
-        if (body[field] !== undefined) {
-          updateData[field] = body[field];
-        }
-      }
-      updateData.updatedAt = new Date();
-  
-      const updatedJob = await Job.findOneAndUpdate(
-        { _id: jobId },
-        { $set: updateData },
-        { new: true, runValidators: true }
+    if (!jobId) {
+      const response = NextResponse.json(
+        { error: "Job ID is required" },
+        { status: 400 }
       );
-  
-      if (!updatedJob) {
-        return NextResponse.json(
-          { error: "Job not found" },
-          { status: 404 }
-        );
-      }
-  
-      return NextResponse.json(
-        { 
-          message: "Job updated successfully",
-          job: updatedJob 
-        },
-        { status: 200 }
-      );
-    } catch (error: any) {
-      console.error("Error updating job:", error);
-  
-      if (error.name === 'ValidationError') {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 400 }
-        );
-      }
-  
-      if (error.name === 'CastError') {
-        return NextResponse.json(
-          { error: "Invalid Job ID format" },
-          { status: 400 }
-        );
-      }
-  
-      return NextResponse.json(
-        { error: "Failed to update job" },
-        { status: 500 }
-      );
+      return addCorsHeaders(response);
     }
+
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      const response = NextResponse.json(
+        { error: "Job not found" },
+        { status: 404 }
+      );
+      return addCorsHeaders(response);
+    }
+
+    const response = NextResponse.json(
+      { job },
+      { status: 200 }
+    );
+    return addCorsHeaders(response);
+
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    const response = NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+    return addCorsHeaders(response);
   }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 204 });
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  return response;
+}
