@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import toast from "react-hot-toast";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 const storage = getStorage(app);
 
@@ -209,7 +210,7 @@ export default function JobPostingForm() {
           </div>
 
           <Textarea name="description" placeholder="Description of jobs" value={formData.description} onChange={handleInputChange} required />
-          <Textarea name="projectdescription" placeholder="Project Description" value={formData.projectdescription} onChange={handleInputChange} required />
+          <Textarea name="projectdescription" placeholder="Project Description is optional you can write not write" value={formData.projectdescription} onChange={handleInputChange} required />
           <Textarea name="jobrequirementskills" placeholder="Job Requirements & Skills" value={formData.jobrequirementskills} onChange={handleInputChange} required />
           <Textarea name="jobresponsibilities" placeholder="Job Responsibilities" value={formData.jobresponsibilities} onChange={handleInputChange} required />
           <Textarea name="questionone" placeholder="Question One" value={formData.questionone} onChange={handleInputChange} required />
@@ -235,6 +236,19 @@ export default function JobPostingForm() {
             </Button>
           </div>
         </form>
+      )}
+      {/* adding a preview uploaded image */}
+      {cardImgFile && (
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">Card Image Preview:</h3>
+          <Image src={URL.createObjectURL(cardImgFile)} alt="Card Image" className="w-full h-auto rounded-md" />
+        </div>
+      )}
+      {bgImgFile && (
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">Background Image Preview:</h3>
+          <Image src={URL.createObjectURL(bgImgFile)} alt="Background Image" className="w-full h-auto rounded-md" />
+        </div>
       )}
 
       {loadingJobs ? (
