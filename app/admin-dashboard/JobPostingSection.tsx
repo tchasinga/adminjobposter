@@ -238,18 +238,7 @@ export default function JobPostingForm() {
         </form>
       )}
       {/* adding a preview uploaded image */}
-      {cardImgFile && (
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Card Image Preview:</h3>
-          <Image src={URL.createObjectURL(cardImgFile)} alt="Card Image" className="w-full h-auto rounded-md" />
-        </div>
-      )}
-      {bgImgFile && (
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Background Image Preview:</h3>
-          <Image src={URL.createObjectURL(bgImgFile)} alt="Background Image" className="w-full h-auto rounded-md" />
-        </div>
-      )}
+    
 
       {loadingJobs ? (
         <div className="space-y-4">
