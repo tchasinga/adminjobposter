@@ -7,7 +7,7 @@ import Job from "@/app/models/jobs.models";
 // https://kuvosh.vercel.app
 // http://localhost:3001
 
-// CORS headers configuration
+// CORS headers configuration with more change
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://kuvosh.vercel.app",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
