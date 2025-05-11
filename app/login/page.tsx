@@ -7,7 +7,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlice";
 import { useDispatch } from "react-redux";
-import toast from "react-hot-toast";
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -25,6 +25,7 @@ export default function Login() {
     // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields');
+      toast.error('Please fill in all fields firstly ⚠️ ');
       return;
     }
 
