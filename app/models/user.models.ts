@@ -60,6 +60,8 @@ const UserSchema = new Schema<IUser, IUserModel>({
       }
 }, { timestamps: true });
 
+
+
 UserSchema.post('validate', function (user: IUser) {
     console.log('New user validated', user);
     user.password = bcrypt.hashSync(user.password, 10);

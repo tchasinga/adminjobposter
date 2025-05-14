@@ -53,10 +53,11 @@ export default function JobPostingForm() {
     fetchJobs();
   }, []);
 
+
   const fetchJobs = async () => {
     try {
       setLoadingJobs(true);
-      const response = await fetch("https://kuvoshadmin.vercel.app/api/jobs");
+      const response = await fetch("http://localhost:3000/api/jobs");
       const data = await response.json();
       setJobs(data.jobs || []);
     } catch (error) {

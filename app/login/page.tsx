@@ -9,6 +9,9 @@ import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlic
 import { useDispatch } from "react-redux";
 import toast from 'react-hot-toast';
 
+
+
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +34,10 @@ export default function Login() {
 
     if (!email.includes('@')) {
       setError('Please enter a valid email');
+      toast.error("please sent the valid email adrress now ⚠️")
       return;
+    }else{
+      toast.success("validated email setted now move to the next")
     }
 
     setIsLoading(true);
@@ -158,8 +164,6 @@ export default function Login() {
                   Remember me
                 </label>
               </div>
-
-              
             </div>
 
             <div>
