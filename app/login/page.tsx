@@ -9,9 +9,6 @@ import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlic
 import { useDispatch } from "react-redux";
 import toast from 'react-hot-toast';
 
-
-
-
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,11 +18,12 @@ export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    // Basic validation
+    // Basic validation good for now
     if (!email || !password) {
       setError('Please fill in all fields');
       toast.error('Please fill in all fields firstly ⚠️ ');
@@ -38,6 +36,7 @@ export default function Login() {
       return;
     }else{
       toast.success("validated email setted now move to the next")
+      console.log("the error comes from the Apis", error)
     }
 
     setIsLoading(true);

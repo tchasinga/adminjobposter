@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { FileText, ArrowLeft } from 'lucide-react';
 import { ResumeActions } from '@/components/resume-actions';
+import toast from 'react-hot-toast';
 
 interface Applicant {
   _id: string;
@@ -19,7 +20,7 @@ interface Applicant {
   casinoExperience: boolean;
   strokeIgaming: boolean;
   previousCompany: string;
-  previousAchievements: string[];
+  previousAchievements:string[];
   availability: string;
   status: string;
   createdAt: string;
@@ -27,6 +28,7 @@ interface Applicant {
   __v: number;
 }
 
+// Node code is added now for really...
 async function getApplicantDetails(id: string): Promise<Applicant | null> {
   try {
     const res = await fetch(`http://localhost:3000/api/applicants/${id}`, {
@@ -38,6 +40,7 @@ async function getApplicantDetails(id: string): Promise<Applicant | null> {
 
     if (!res.ok) {
       console.error(`API Error: ${res.status} ${res.statusText}`);
+      toast.error(`please check your error this place: ${res.status} ${res.statusText}`)
       return null;
     }
 
