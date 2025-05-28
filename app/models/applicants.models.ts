@@ -1,26 +1,27 @@
-import { Schema, model, models, Document } from "mongoose";
+import { Schema, model, models, Document } from 'mongoose'
 
 interface IApplicant extends Document {
-    fullname: string;
-    country: string;
-    email: string;
-    telegramUsername: string;
-    appliedJobs: string[];
-    salaryExpectation: number;
-    experienceLevel: string;
-    uploadResume: string;
-    validedPhonenumber: string;
-    casinoExperience: boolean;
-    strokeIgaming: boolean;
-    previousCompany: string;
-    previousAchievements: string[];
-    availability: string;
-    status: 'pending' | 'reviewed' | 'rejected' | 'hired';
-    createdAt: Date;
-    updatedAt: Date;
+  fullname: string
+  country: string
+  email: string
+  telegramUsername: string
+  appliedJobs: string[]
+  salaryExpectation: number
+  experienceLevel: string
+  uploadResume: string
+  validedPhonenumber: string
+  casinoExperience: boolean
+  strokeIgaming: boolean
+  previousCompany: string
+  previousAchievements: string[]
+  availability: string
+  status: 'pending' | 'reviewed' | 'rejected' | 'hired'
+  createdAt: Date
+  updatedAt: Date
 }
 
-const ApplicantSchema = new Schema<IApplicant>({
+const ApplicantSchema = new Schema<IApplicant>(
+  {
     fullname: { type: String, required: true },
     country: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -40,8 +41,11 @@ const ApplicantSchema = new Schema<IApplicant>({
       enum: ['pending', 'reviewed', 'rejected', 'hired'],
       default: 'pending'
     }
-},{ timestamps: true });
+  },
+  { timestamps: true }
+)
 
-const Applicant = models.Applicant || model<IApplicant>("Applicant", ApplicantSchema);
+const Applicant =
+  models.Applicant || model<IApplicant>('Applicant', ApplicantSchema)
 
-export default Applicant;
+export default Applicant
